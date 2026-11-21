@@ -40,14 +40,22 @@
   因此 `man/*.Rd` 与 `NAMESPACE` 只能手写，正确性依赖 GitHub Actions 验证。
 + *Typst 安装受阻*：`scoop install typst` 从 GitHub Release 下载二进制时，
   连接被限速至约 20 至 30 KB/s 并反复超时；改用 npm 包 `@flukxr/typst-cli`
-  （0.15.1）仅 6 秒即完成安装，问题解决。
+  （0.15.1）仅 6 秒即完成安装。
 + *中文字体缺失*：Typst 默认字体不含汉字，需将字体回退设为 `SimSun`，
   否则中文无法渲染。
 + *Typst 语法陷阱*：`_` 在 Typst 中表示强调，文件名里的下划线必须写作 `\_`；
   矩阵函数名为 `mat` 而非 `matrix`；数学模式中的多字母变量须加引号
   （如 `"Ips"`），否则被拆成单字母连乘。
-+ *GitHub 认证与网络*：SSH 22 端口被重置，`ssh.github.com:443` 可达但公钥
-  未登记，`publickey` 被拒；最终改用 HTTPS + Personal Access Token 推送。
++ *GitHub 网络与认证*：SSH 22 端口被重置，`github.com` 的 443 端口亦间歇性
+  超时（DNS 被污染至不可达地址）；最终通过 API 用 Personal Access Token
+  添加 deploy key，再经 `ssh.github.com:443` 完成推送。
++ *浅克隆导致推送缺对象*：模板以 `--depth 1` 克隆，本地为浅仓库；推送时
+  pack 引用历史提交 `ba9a57` 的对象而本地缺失，远程报
+  `did not receive expected object`。执行 `git fetch --unshallow` 补齐历史后
+  推送成功。
++ *首轮 CI 失败*：测试断言 `lm_solve` 的残差时，`.lm.fit` 返回矩阵而期望为
+  向量，`dim` 不一致导致失败；且未声明 `.lm.fit` 依赖。修正断言为
+  `as.vector(...)` 并加 `importFrom(stats, .lm.fit)` 后，`R CMD check` 通过。
 + *模型未记 X 的中心化*：`LS_MultiBreaks` 的设计矩阵对 `X` 做了中心化，
   其截距实为 `beta_0 + beta_1 * mean(X)`，测试断言时需按此换算，否则会误判。
 
