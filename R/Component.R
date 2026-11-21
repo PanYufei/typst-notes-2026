@@ -75,6 +75,7 @@ LS_OneBreak <- function(Y, X, Ic, ...) {
 #' @param ... passed to `.lm.fit`.
 #'
 #' @return list of `coef`, `fitted`, `resi`, `SSE`.
+#' @importFrom stats .lm.fit
 #' @noRd
 lm_solve <- function(design, response, only.SSE = FALSE, ...) {
   l <- .lm.fit(design, as.matrix(response))

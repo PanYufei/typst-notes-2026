@@ -67,7 +67,7 @@ test_that("lm_solve returns the least squares solution", {
 
   expect_equal(unname(out$coef), c(1, 2), tolerance = 1e-8)
   expect_equal(out$fitted, Y, tolerance = 1e-8)
-  expect_equal(out$resi, rep(0, 3), tolerance = 1e-8)
+  expect_equal(as.vector(out$resi), rep(0, 3), tolerance = 1e-8)
   expect_equal(out$SSE, 0, tolerance = 1e-8)
 })
 
